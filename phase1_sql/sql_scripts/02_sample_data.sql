@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- PHASE 1: INSERT SAMPLE DATA
 -- PURPOSE: Populate OLTP tables with realistic test data
 -- DESCRIPTION:
@@ -111,178 +111,223 @@ VALUES
 PRINT 'Inserted 15 customers';
 GO
 
-
-
 -- ============================================================================
--- STEP 4: Insert Orders
+-- STEP 4: Insert Orders - WITH MANUAL VERIFICATION
 -- ============================================================================
+
 
 PRINT 'Inserting orders...';
 
--- Create orders for various customers across different dates
 INSERT INTO orders (customer_id, order_date, total_amount, order_status)
 VALUES
-    -- Customer 1: John Smith (3 orders)
-    (1, '2024-01-05', 1379.97, 'completed'),
+    -- Order 1
+    (1, '2024-01-05', 1329.98, 'completed'),
+    -- Order 2
     (1, '2024-02-10', 89.99, 'completed'),
+    -- Order 3
     (1, '2024-03-15', 39.99, 'completed'),
-    
-    -- Customer 2: Emily Johnson (2 orders)
-    (2, '2024-01-18', 179.98, 'completed'),
-    (2, '2024-02-28', 49.99, 'completed'),
-    
-    -- Customer 3: Michael Williams (2 orders)
-    (3, '2024-01-22', 129.97, 'completed'),
+    -- Order 4
+    (2, '2024-01-18', 159.97, 'completed'),
+    -- Order 5
+    (2, '2024-02-28', 99.98, 'completed'),
+    -- Order 6
+    (3, '2024-01-22', 129.99, 'completed'),
+    -- Order 7
     (3, '2024-03-08', 399.99, 'completed'),
-    
-    -- Customer 4: Sarah Brown (1 order)
+    -- Order 8
     (4, '2024-02-05', 119.99, 'completed'),
-    
-    -- Customer 5: David Jones (2 orders)
+    -- Order 9
     (5, '2024-01-30', 24.99, 'completed'),
-    (5, '2024-03-10', 729.97, 'completed'),
-    
-    -- Customer 6: Jessica Garcia (1 order)
-    (6, '2024-02-14', 149.99, 'completed'),
-    
-    -- Customer 7: Robert Miller (2 orders)
-    (7, '2024-01-12', 499.97, 'completed'),
+    -- Order 10
+    (5, '2024-03-10', 329.98, 'completed'),
+    -- Order 11
+    (6, '2024-02-14', 169.97, 'completed'),
+    -- Order 12
+    (7, '2024-01-12', 89.99, 'completed'),
+    -- Order 13
     (7, '2024-03-01', 79.99, 'pending'),
-    
-    -- Customer 8: Amanda Davis (1 order)
-    (8, '2024-02-20', 44.99, 'completed'),
-    
-    -- Customer 9: James Rodriguez (2 orders)
-    (9, '2024-01-28', 299.97, 'completed'),
+    -- Order 14
+    (8, '2024-02-20', 49.98, 'completed'),
+    -- Order 15
+    (9, '2024-01-28', 59.99, 'completed'),
+    -- Order 16
     (9, '2024-03-05', 199.99, 'shipped'),
-    
-    -- Customer 10: Lisa Martinez (1 order)
-    (10, '2024-02-08', 69.99, 'completed'),
-    
-    -- Customer 11: Christopher Hernandez (2 orders)
-    (11, '2024-01-20', 354.97, 'completed'),
-    (11, '2024-03-12', 24.99, 'pending'),
-    
-    -- Customer 12: Michelle Lopez (1 order)
-    (12, '2024-02-25', 1299.99, 'completed'),
-    
-    -- Customer 13: Daniel Gonzalez (1 order)
+    -- Order 17
+    (10, '2024-02-08', 149.99, 'completed'),
+    -- Order 18
+    (11, '2024-01-20', 69.99, 'completed'),
+    -- Order 19
+    (11, '2024-03-12', 139.98, 'pending'),
+    -- Order 20
+    (12, '2024-02-25', 1329.98, 'completed'),
+    -- Order 21
     (13, '2024-03-02', 89.99, 'completed'),
-    
-    -- Customer 14: Jennifer Wilson (2 orders)
-    (14, '2024-01-08', 59.99, 'completed'),
-    (14, '2024-02-18', 139.98, 'completed'),
-    
-    -- Customer 15: Matthew Anderson (1 order)
-    (15, '2024-03-18', 309.97, 'completed');
+    -- Order 22
+    (14, '2024-01-08', 49.98, 'completed'),
+    -- Order 23
+    (14, '2024-02-18', 59.98, 'completed'),
+    -- Order 24
+    (15, '2024-03-18', 599.99, 'completed');
+-- COUNT: 24 orders ✓
 
 PRINT 'Inserted 24 orders';
 GO
 
+-- ============================================================================
+-- STEP 5: Insert Order Items - WITH MANUAL COUNT
+-- ============================================================================
 
--- ============================================================================
--- STEP 5: Insert Order Items
--- ============================================================================
 
 PRINT 'Inserting order items...';
 
--- Each order_item links an order to a product with quantity
 INSERT INTO order_items (order_id, product_id, quantity, unit_price, item_total)
 VALUES
-    -- Order 1 (John Smith, 1379.97): Laptop + Mouse + Monitor
-    (1, 1, 1, 1299.99, 1299.99),  -- 1x Laptop Dell XPS 13
-    (1, 2, 1, 29.99, 29.99),      -- 1x Wireless Mouse
-    (1, 5, 1, 399.99, 399.99),    -- 1x 4K Monitor (but wait, can't be in same order at this price)
+    -- ORDER 1: Laptop + Mouse (Total: 1329.98)
+    (1, 1, 1, 1299.99, 1299.99),  -- Item 1
+    (1, 2, 1, 29.99, 29.99),      -- Item 2
+    -- Subtotal: 1299.99 + 29.99 = 1329.98 ✓
     
-    -- Order 1 (corrected): Just laptop and mouse
-    -- (Let me restart with better data)
+    -- ORDER 2: Keyboard (Total: 89.99)
+    (2, 4, 1, 89.99, 89.99),      -- Item 3
+    -- Subtotal: 89.99 ✓
     
-    -- Order 1: Electronics purchase
-    (1, 1, 1, 1299.99, 1299.99),  -- 1x Laptop
-    (1, 2, 3, 29.99, 89.97),      -- 3x Mouse (total: 89.97)
+    -- ORDER 3: Book (Total: 39.99)
+    (3, 12, 1, 39.99, 39.99),     -- Item 4
+    -- Subtotal: 39.99 ✓
     
-    -- Order 2: Keyboard
-    (2, 4, 1, 89.99, 89.99),
+    -- ORDER 4: 2 T-Shirts + Shoes (Total: 159.97)
+    (4, 7, 2, 19.99, 39.98),      -- Item 5
+    (4, 9, 1, 119.99, 119.99),    -- Item 6
+    -- Subtotal: 39.98 + 119.99 = 159.97 ✓
     
-    -- Order 3: Book
-    (3, 13, 1, 39.99, 39.99),
+    -- ORDER 5: Jeans + Book (Total: 99.98)
+    (5, 8, 1, 59.99, 59.99),      -- Item 7
+    (5, 12, 1, 39.99, 39.99),     -- Item 8
+    -- Subtotal: 59.99 + 39.99 = 99.98 ✓
     
-    -- Order 4: Clothing
-    (4, 7, 2, 19.99, 39.98),      -- 2x T-Shirt
-    (4, 9, 1, 119.99, 119.99),    -- 1x Running Shoes
+    -- ORDER 6: Backpack (Total: 129.99)
+    (6, 21, 1, 129.99, 129.99),   -- Item 9
+    -- Subtotal: 129.99 ✓
     
-    -- Order 5: Book
-    (5, 14, 1, 49.99, 49.99),
+    -- ORDER 7: Monitor (Total: 399.99)
+    (7, 5, 1, 399.99, 399.99),    -- Item 10
+    -- Subtotal: 399.99 ✓
     
-    -- Order 6: Mixed items
-    (6, 8, 1, 59.99, 59.99),      -- 1x Jeans
-    (6, 12, 1, 39.99, 39.99),     -- 1x Programming book
+    -- ORDER 8: Running Shoes (Total: 119.99)
+    (8, 9, 1, 119.99, 119.99),    -- Item 11
+    -- Subtotal: 119.99 ✓
     
-    -- Order 7: Monitor
-    (7, 5, 1, 399.99, 399.99),
+    -- ORDER 9: Yoga Mat (Total: 24.99)
+    (9, 22, 1, 24.99, 24.99),     -- Item 12
+    -- Subtotal: 24.99 ✓
     
-    -- Order 8: Running shoes
-    (8, 9, 1, 119.99, 119.99),
+    -- ORDER 10: Tent + Backpack (Total: 329.98)
+    (10, 20, 1, 199.99, 199.99),  -- Item 13
+    (10, 21, 1, 129.99, 129.99),  -- Item 14
+    -- Subtotal: 199.99 + 129.99 = 329.98 ✓
     
-    -- Order 9: Sports equipment
-    (9, 21, 1, 199.99, 199.99),   -- 1x Camping tent
-    (9, 22, 1, 129.99, 129.99),   -- 1x Hiking backpack
+    -- ORDER 11: 3 Books (Total: 169.97)
+    (11, 15, 1, 79.99, 79.99),    -- Item 15
+    (11, 12, 1, 39.99, 39.99),    -- Item 16
+    (11, 14, 1, 49.99, 49.99),    -- Item 17
+    -- Subtotal: 79.99 + 39.99 + 49.99 = 169.97 ✓
     
-    -- Order 10: Outdoor gear
- --   (10, 23, 1, 24.99, 24.99),    -- 1x Yoga mat   -- this line will cause an error, cause no product_id = 23 present - so can't insert this record
+    -- ORDER 12: Pot Set (Total: 89.99)
+    (12, 16, 1, 89.99, 89.99),    -- Item 18
+    -- Subtotal: 89.99 ✓
     
-    -- Order 11: Books
-    (11, 15, 1, 79.99, 79.99),    -- 1x Data Engineering Handbook
-    (11, 13, 1, 39.99, 39.99),    -- 1x Pragmatic Programmer
-    (11, 14, 1, 49.99, 49.99),    -- 1x Clean Code
+    -- ORDER 13: Webcam (Total: 79.99)
+    (13, 6, 1, 79.99, 79.99),     -- Item 19
+    -- Subtotal: 79.99 ✓
     
-    -- Order 12: Kitchen items
-    (12, 16, 1, 89.99, 89.99),    -- 1x Pot set
+    -- ORDER 14: 2 LED Lights (Total: 49.98)
+    (14, 17, 2, 24.99, 49.98),    -- Item 20
+    -- Subtotal: 49.98 ✓
     
-    -- Order 13: Lights and plants
-    (13, 17, 2, 24.99, 49.98),    -- 2x LED string lights
+    -- ORDER 15: Jeans (Total: 59.99)
+    (15, 8, 1, 59.99, 59.99),     -- Item 21
+    -- Subtotal: 59.99 ✓
     
-    -- Order 14: Jeans
-    (14, 8, 1, 59.99, 59.99),
+    -- ORDER 16: Camping Tent (Total: 199.99)
+    (16, 20, 1, 199.99, 199.99),  -- Item 22
+    -- Subtotal: 199.99 ✓
     
-    -- Order 15: Winter jacket
-    (15, 10, 1, 149.99, 149.99),
+    -- ORDER 17: Winter Jacket (Total: 149.99)
+    (17, 10, 1, 149.99, 149.99),  -- Item 23
+    -- Subtotal: 149.99 ✓
     
-    -- Order 16: Sweater
-    (16, 11, 1, 69.99, 69.99),
+    -- ORDER 18: Sweater (Total: 69.99)
+    (18, 11, 1, 69.99, 69.99),    -- Item 24
+    -- Subtotal: 69.99 ✓
     
-    -- Order 17: Monitor and webcam
-    (17, 5, 1, 399.99, 399.99),   -- 1x Monitor
+    -- ORDER 19: Hub + Keyboard (Total: 139.98)
+    (19, 3, 1, 49.99, 49.99),     -- Item 25
+    (19, 4, 1, 89.99, 89.99),     -- Item 26
+    -- Subtotal: 49.99 + 89.99 = 139.98 ✓
     
-    -- Order 18: Hub and keyboard
-    (18, 3, 1, 49.99, 49.99),     -- 1x USB-C Hub
-    (18, 4, 1, 89.99, 89.99),     -- 1x Mechanical Keyboard
+    -- ORDER 20: Laptop + Mouse (Total: 1329.98)
+    (20, 1, 1, 1299.99, 1299.99), -- Item 27
+    (20, 2, 1, 29.99, 29.99),     -- Item 28
+    -- Subtotal: 1299.99 + 29.99 = 1329.98 ✓
     
-    -- Order 19: Keyboard
-    (19, 4, 1, 89.99, 89.99),
+    -- ORDER 21: Keyboard (Total: 89.99)
+    (21, 4, 1, 89.99, 89.99),     -- Item 29
+    -- Subtotal: 89.99 ✓
     
-    -- Order 20: Yoga mat
- --   (20, 23, 2, 24.99, 49.98),    -- 2x Yoga mat   -- this line will cause an error, cause no product_id = 23 present - so can't insert this record
+    -- ORDER 22: 2 Yoga Mats (Total: 49.98)
+    (22, 22, 2, 24.99, 49.98),    -- Item 30
+    -- Subtotal: 49.98 ✓
     
-    -- Order 21: T-shirt and book
-    (21, 7, 1, 19.99, 19.99),     -- 1x T-Shirt
-    (21, 12, 1, 39.99, 39.99),    -- 1x Book
+    -- ORDER 23: T-Shirt + Book (Total: 59.98)
+    (23, 7, 1, 19.99, 19.99),     -- Item 31
+    (23, 12, 1, 39.99, 39.99),    -- Item 32
+    -- Subtotal: 19.99 + 39.99 = 59.98 ✓
     
-    -- Order 22: Winter jacket and sweater
-    (22, 10, 1, 149.99, 149.99),  -- 1x Winter Jacket
-    
-    -- Order 23: Bike
-    (23, 20, 1, 599.99, 599.99),  -- 1x Mountain Bike
-    
-    -- Order 24: Tent and backpack
-    (24, 21, 1, 199.99, 199.99),  -- 1x Camping Tent
-    (24, 22, 1, 129.99, 129.99)  -- 1x Hiking Backpack
-    
-    -- Order 25: Laptop and mouse
- --   (25, 1, 1, 1299.99, 1299.99), -- 1x Laptop    -- this line will cause an error, cause no order_id = 25 present - so can't insert this record
- --   (25, 2, 1, 29.99, 29.99);     -- 1x Mouse     -- this line will cause an error, cause no order_id = 25 present - so can't insert this record
+    -- ORDER 24: Mountain Bike (Total: 599.99)
+    (24, 19, 1, 599.99, 599.99);  -- Item 33
+    -- Subtotal: 599.99 ✓
 
-PRINT 'Inserted order items';
+-- FINAL COUNT: 33 order items (I counted each one)
+
+PRINT 'Inserted 33 order items';
+GO
+
+-- ============================================================================
+-- VERIFICATION: Ensure order totals match sum of items
+-- ============================================================================
+
+PRINT '';
+PRINT 'Verifying order totals...';
+PRINT '';
+
+SELECT 
+    o.order_id,
+    o.total_amount AS order_total,
+    ISNULL(SUM(oi.item_total), 0) AS items_total,
+    o.total_amount - ISNULL(SUM(oi.item_total), 0) AS discrepancy
+FROM orders o
+LEFT JOIN order_items oi ON o.order_id = oi.order_id
+GROUP BY o.order_id, o.total_amount
+HAVING ABS(o.total_amount - ISNULL(SUM(oi.item_total), 0)) > 0.01;
+
+-- Should return 0 rows
+
+PRINT 'Verification complete - if no rows above, all totals match!';
+GO
+
+-- ============================================================================
+-- COUNT VERIFICATION
+-- ============================================================================
+
+PRINT '';
+PRINT 'Final counts:';
+
+SELECT 'orders' AS table_name, COUNT(*) AS row_count FROM orders
+UNION ALL
+SELECT 'order_items', COUNT(*) FROM order_items;
+
+-- Should show: orders = 24, order_items = 33
+
 GO
 
 PRINT '';
@@ -293,10 +338,10 @@ PRINT 'Data Summary:';
 PRINT '  - 5 product categories';
 PRINT '  - 22 products';
 PRINT '  - 15 customers';
-PRINT '  - 25 orders';
-PRINT '  - 35+ order items';
+PRINT '  - 24 orders';
+PRINT '  - 33 order items';
 PRINT '';
-PRINT 'Total data rows: 100+';
+PRINT 'Total data rows: 99';
 PRINT 'Ready for testing and analysis!';
 PRINT '========================================';
 GO
@@ -338,7 +383,7 @@ product_categories    5
 products              22
 customers             15
 orders                24
-order_items           34
-```
+order_items           33
+
 */
 
