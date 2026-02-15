@@ -93,7 +93,7 @@ CREATE TABLE dbo.etl_execution_log (
 	source_id int FOREIGN KEY (source_id) REFERENCES dbo.etl_source_config(source_id),
 	pipeline_run_id nvarchar(100) NOT NULL,
 	pipeline_name nvarchar(100) NOT NULL,
-	activity_name int NOT NULL,
+	activity_name nvarchar(100)NOT NULL,
 	execution_date datetime2 NOT NULL,
 	completion_date datetime2,
 	status nvarchar(20) NOT NULL,    -- 'STARTED', 'SUCCESS', 'FAILED', 'QUARANTINED'
@@ -146,14 +146,16 @@ BEGIN
             source_id, 
             execution_date, 
             status, 
-            pipeline_run_id
+            pipeline_run_id,
+            activity_name
         )
         VALUES (
             @PipelineName, 
             @SourceId, 
             GETUTCDATE(), -- Logs the start time in UTC
             @Status, 
-            @PipelineRunId
+            @PipelineRunId,
+			@ActivityName
         );
 
         -- Returns the auto-generated Identity value to your ADF Lookup task
