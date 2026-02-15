@@ -89,18 +89,18 @@ IF OBJECT_ID('dbo.etl_execution_log', 'U') IS NOT NULL
 GO
 
 CREATE TABLE dbo.etl_execution_log (
-    execution_id INT PRIMARY KEY IDENTITY(1,1),
-    pipeline_name NVARCHAR(100) NOT NULL,
-    source_id INT,
-    FOREIGN KEY (source_id) REFERENCES dbo.etl_source_config(source_id),
-    execution_date DATETIME2 NOT NULL,
-    completion_date DATETIME2,
-    status NVARCHAR(20) NOT NULL,  -- 'STARTED', 'SUCCESS', 'FAILED', 'QUARANTINED'
-    rows_processed INT,
-    rows_failed INT,
-    error_message NVARCHAR(1000),
-    pipeline_run_id NVARCHAR(100),
-    created_date DATETIME2 DEFAULT GETDATE()
+	execution_id int PRIMARY KEY IDENTITY(1,1) NOT NULL,
+	source_id int FOREIGN KEY (source_id) REFERENCES dbo.etl_source_config(source_id),
+	pipeline_run_id nvarchar(100) NOT NULL,
+	pipeline_name nvarchar(100) NOT NULL,
+	activity_name int NOT NULL,
+	execution_date datetime2 NOT NULL,
+	completion_date datetime2,
+	status nvarchar(20) NOT NULL,    -- 'STARTED', 'SUCCESS', 'FAILED', 'QUARANTINED'
+	rows_processed int NULL,
+	rows_failed int NULL,
+	error_message nvarchar(1000) NULL,
+	created_date datetime2 DEFAULT GETDATE()
 );
 
 CREATE INDEX idx_execution_status ON dbo.etl_execution_log(status);
@@ -108,38 +108,75 @@ CREATE INDEX idx_execution_date ON dbo.etl_execution_log(execution_date);
 GO
 
 
+
 -- =============================================
 -- STORED PROCEDURE 1: sp_log_pipeline_execution
 -- =============================================
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 IF OBJECT_ID('dbo.sp_log_pipeline_execution', 'P') IS NOT NULL
     DROP PROCEDURE dbo.sp_log_pipeline_execution;
 GO
 
-CREATE PROCEDURE dbo.sp_log_pipeline_execution
-    @PipelineName NVARCHAR(100),
-    @SourceId INT = NULL,
-    @Status NVARCHAR(20),
+ CREATE PROCEDURE [dbo].[sp_log_pipeline_execution]
+    @ExecutionId INT = NULL,
+	@SourceId INT = NULL,
+    @PipelineRunId NVARCHAR(100) = NULL,
+	@PipelineName NVARCHAR(100) = NULL,
+	@ActivityName NVARCHAR(100) = NULL,
+    @Status NVARCHAR(20) = NULL,
     @RowsProcessed INT = 0,
     @RowsFailed INT = 0,
-    @ErrorMessage NVARCHAR(1000) = NULL,
-    @PipelineRunId NVARCHAR(100) = NULL
+    @ErrorMessage NVARCHAR(1000) = NULL
+
 AS
 BEGIN
     SET NOCOUNT ON;
-    
-    INSERT INTO dbo.etl_execution_log (
-        pipeline_name, source_id, execution_date, status,
-        rows_processed, rows_failed, error_message, pipeline_run_id
-    )
-    VALUES (
-        @PipelineName, @SourceId, GETDATE(), @Status,
-        @RowsProcessed, @RowsFailed, @ErrorMessage, @PipelineRunId
-    );
-    
-    PRINT 'Pipeline logged: ' + @PipelineName + ' - ' + @Status;
+
+    -- MODE 1: START (Insert new record)
+    IF @ExecutionId IS NULL
+    BEGIN
+        INSERT INTO dbo.etl_execution_log (
+            pipeline_name, 
+            source_id, 
+            execution_date, 
+            status, 
+            pipeline_run_id
+        )
+        VALUES (
+            @PipelineName, 
+            @SourceId, 
+            GETUTCDATE(), -- Logs the start time in UTC
+            @Status, 
+            @PipelineRunId
+        );
+
+        -- Returns the auto-generated Identity value to your ADF Lookup task
+        SELECT CAST(SCOPE_IDENTITY() AS INT) AS execution_id; 
+    END
+
+    -- MODE 2: END (Update existing record)
+    ELSE
+    BEGIN
+        UPDATE dbo.etl_execution_log
+        SET status = @Status,
+            completion_date = GETUTCDATE(), -- Logs the end time to calculate duration
+            rows_processed = @RowsProcessed,
+            rows_failed = @RowsFailed,
+            error_message = @ErrorMessage,
+			activity_name = @ActivityName
+        WHERE execution_id = @ExecutionId;
+    END
 END;
+
 GO
+
+
 
 -- =============================================
 -- STORED PROCEDURE 2: sp_update_watermark
