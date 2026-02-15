@@ -3,6 +3,8 @@ import numpy as np
 from datetime import datetime, timedelta
 import random
 
+today = datetime.now().strftime('%Y-%m-%d')
+
 np.random.seed(42)
 random.seed(42)
 
@@ -62,7 +64,10 @@ products_data = {
 }
 
 df_products = pd.DataFrame(products_data)
-df_products.to_csv('phase2_azure/sample_data/products_full.csv', index=False)
+products_file = f'phase2_azure/sample_data/products_{today}.csv'
+df_products.to_csv(products_file, index=False)
+
+
 print(f"Done - Created products_full.csv ({len(df_products)} rows)")
 
 # =============================================
@@ -96,7 +101,7 @@ orders_data = {
 }
 
 df_orders = pd.DataFrame(orders_data)
-today = datetime.now().strftime('%Y-%m-%d')
+
 orders_file = f'phase2_azure/sample_data/orders_{today}.csv'
 df_orders.to_csv(orders_file, index=False)
 print(f"Done - Created {orders_file} ({len(df_orders)} rows)")
