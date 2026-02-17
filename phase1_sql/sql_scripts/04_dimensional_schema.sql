@@ -146,6 +146,8 @@ CREATE TABLE dbo.customer_dim (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
+	city VARCHAR(100) NOT NULL, 
+	state VARCHAR(100) NOT NULL, 
     country VARCHAR(100) NOT NULL,                     -- Denormalized from OLTP
     registration_date DATE NOT NULL,                   -- When they signed up
     is_active BIT NOT NULL DEFAULT 1,                  -- Currently a customer?
