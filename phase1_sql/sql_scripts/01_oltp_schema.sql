@@ -97,13 +97,21 @@ CREATE TABLE customers (
     -- NOT NULL: Every customer must have email
     -- UNIQUE: No duplicate emails allowed (each customer has one unique email)
     email VARCHAR(255) UNIQUE NOT NULL,
+
+	-- Column: City of residence
+    city VARCHAR(100),
+
+		-- Column: State of residence
+    state VARCHAR(100),
     
     -- Column: Country of residence
     country VARCHAR(100),
     
     -- Column: Account creation date
-    -- DEFAULT CAST(GETDATE() AS DATE) = If not specified, use today's date
-    registration_date DATE NOT NULL DEFAULT CAST(GETDATE() AS DATE)
+    created_date DATE NULL DEFAULT GETDATE(),
+
+	    -- Column: Account creation date
+    updated_date DATETIME NULL DEFAULT GETDATE()
 );
 
 PRINT 'Created table: customers';
