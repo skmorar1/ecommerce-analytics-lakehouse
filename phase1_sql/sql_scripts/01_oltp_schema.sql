@@ -108,7 +108,7 @@ CREATE TABLE customers (
     country VARCHAR(100),
     
     -- Column: Account creation date
-    created_date DATE NULL DEFAULT GETDATE(),
+    registration_date DATE NOT NULL DEFAULT GETDATE(),
 
 	    -- Column: Account creation date
     updated_date DATETIME NULL DEFAULT GETDATE()
