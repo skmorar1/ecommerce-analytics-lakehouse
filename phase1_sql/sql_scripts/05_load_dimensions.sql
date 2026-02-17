@@ -158,20 +158,24 @@ PRINT '';
 PRINT 'STEP 4: Loading customer_dim (with denormalized location)';
 PRINT '---';
 
+
 INSERT INTO dbo.customer_dim 
-(customer_id, first_name, last_name, email, country, 
+(customer_id, first_name, last_name, email, city, state, country,
  registration_date, is_active, effective_date)
 SELECT
     c.customer_id,
     c.first_name,
     c.last_name,
     c.email,
+	c.city,
+	c.state,
     c.country,
-    c.registration_date,
+    registration_date,
     1 AS is_active,
     CAST(GETDATE() AS DATE) AS effective_date
 FROM ecommerce_oltp.dbo.customers c
 WHERE c.customer_id IS NOT NULL;
+
 
 PRINT CAST(@@ROWCOUNT AS VARCHAR(10)) + ' customer records inserted ✓';
 PRINT '';
