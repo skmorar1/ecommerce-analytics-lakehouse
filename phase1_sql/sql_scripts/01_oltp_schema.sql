@@ -68,6 +68,9 @@ CREATE TABLE products (
     
     -- Column: Current inventory quantity
     stock_quantity INT NOT NULL DEFAULT 0,
+
+	-- Column: Watermark column
+	updated_date DATETIME NULL DEFAULT GETDATE()
     
     -- Define Foreign Key relationship
     CONSTRAINT fk_products_category 
@@ -110,7 +113,7 @@ CREATE TABLE customers (
     -- Column: Account creation date
     registration_date DATE NOT NULL DEFAULT GETDATE(),
 
-	    -- Column: Account creation date
+	    -- Column: Watermark column
     updated_date DATETIME NULL DEFAULT GETDATE()
 );
 
@@ -142,6 +145,9 @@ CREATE TABLE orders (
     -- Column: Order status
     -- Typical values: 'pending', 'completed', 'cancelled', 'shipped'
     order_status VARCHAR(50) DEFAULT 'pending',
+
+	-- Column: Watermark column
+	last_modified_date DATETIME NULL DEFAULT GETDATE()
     
     -- Define Foreign Key relationship
     CONSTRAINT fk_orders_customer 
