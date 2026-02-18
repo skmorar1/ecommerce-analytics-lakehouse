@@ -31,6 +31,7 @@ CREATE TABLE dbo.etl_source_config (
     file_path NVARCHAR(500) NOT NULL,
     table_name NVARCHAR(100) NOT NULL,
     load_type NVARCHAR(50) NOT NULL,    -- 'FULL' or 'INCREMENTAL'
+	watermark_column NVARCHAR (50) NULL,
     merge_key NVARCHAR(100),            --  Column name from the source file that contains the date used for incremental tracking, e.g. last_modified_date or updated_at or modified_on
     created_date DATETIME2 DEFAULT GETDATE(),
     updated_date DATETIME2 DEFAULT GETDATE(),
@@ -60,7 +61,6 @@ GO
 CREATE TABLE dbo.etl_watermark (
     watermark_id INT PRIMARY KEY IDENTITY(1,1),
     source_id INT NOT NULL FOREIGN KEY REFERENCES dbo.etl_source_config(source_id),
-    watermark_column NVARCHAR(100) NOT NULL,
     last_watermark_value NVARCHAR(100),
     current_watermark_value NVARCHAR(100),
     load_date DATETIME2 DEFAULT GETDATE(),
@@ -79,9 +79,6 @@ GO
 -- You use it to troubleshoot failures and prove to auditors that data loaded correctly.
 
 -- =============================================
--- Immutable log of every pipeline run
--- Once logged, never updated (append-only)
-
 
 
 IF OBJECT_ID('dbo.etl_execution_log', 'U') IS NOT NULL
@@ -107,6 +104,33 @@ CREATE INDEX idx_execution_status ON dbo.etl_execution_log(status);
 CREATE INDEX idx_execution_date ON dbo.etl_execution_log(execution_date);
 GO
 
+-- =============================================
+-- TABLE 4: etl_data_quality_log
+-- Answers: What happens when you have bad data 
+-- You use it to log data quality issues
+
+-- =============================================
+
+CREATE TABLE dbo.etl_data_quality_log (
+    log_id INT IDENTITY(1,1) PRIMARY KEY,
+    source_id INT NOT NULL,
+    table_name VARCHAR(100) NOT NULL,
+    file_name VARCHAR(200) NULL,
+    total_records INT NOT NULL,
+    valid_records INT NOT NULL,
+    invalid_records INT NOT NULL,
+    quarantine_reason VARCHAR(500) NULL,
+    execution_date DATETIME DEFAULT GETDATE(),
+    
+    CONSTRAINT FK_dq_log_source FOREIGN KEY (source_id) 
+    REFERENCES dbo.etl_source_config(source_id)
+);
+GO
+
+-- Create index for faster queries
+CREATE INDEX idx_dq_log_source_date 
+ON dbo.etl_data_quality_log(source_id, execution_date);
+GO
 
 
 -- =============================================
