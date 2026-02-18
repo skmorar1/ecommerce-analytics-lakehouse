@@ -70,7 +70,7 @@ CREATE TABLE products (
     stock_quantity INT NOT NULL DEFAULT 0,
 
 	-- Column: Watermark column
-	updated_date DATETIME NULL DEFAULT GETDATE()
+	updated_date DATETIME NOT NULL DEFAULT GETDATE()
     
     -- Define Foreign Key relationship
     CONSTRAINT fk_products_category 
@@ -114,7 +114,7 @@ CREATE TABLE customers (
     registration_date DATE NOT NULL DEFAULT GETDATE(),
 
 	    -- Column: Watermark column
-    updated_date DATETIME NULL DEFAULT GETDATE()
+    updated_date DATETIME NOT NULL DEFAULT GETDATE()
 );
 
 PRINT 'Created table: customers';
@@ -147,7 +147,7 @@ CREATE TABLE orders (
     order_status VARCHAR(50) DEFAULT 'pending',
 
 	-- Column: Watermark column
-	last_modified_date DATETIME NULL DEFAULT GETDATE()
+	last_modified_date DATETIME NOT NULL DEFAULT GETDATE()
     
     -- Define Foreign Key relationship
     CONSTRAINT fk_orders_customer 
