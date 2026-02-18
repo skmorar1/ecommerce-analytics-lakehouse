@@ -26,12 +26,32 @@ VALUES
 -- =============================================
 
 INSERT INTO dbo.etl_watermark (
-    source_id, watermark_column, last_watermark_value, current_watermark_value
+    source_id,
+    watermark_column,
+    last_watermark_value,
+    current_watermark_value,
+    load_date
 )
-SELECT
-    source_id, merge_key, NULL, '1900-01-01'
-FROM dbo.etl_source_config
-WHERE load_type = 'INCREMENTAL';
+VALUES 
+(
+ 1,                                 -- source_id for customers
+    'last_modified_date',        -- watermark column
+    NULL,                           -- first run, no last value
+    '1900-01-01 00:00:00',         -- initialization value
+    GETDATE()                       -- current timestamp
+),
+( 2,                                -- source_id for customers
+   'customer_created_date',                   -- watermark column
+    NULL,                           -- first run, no last value
+    '1900-01-01 00:00:00',         -- initialization value
+    GETDATE()                       -- current timestamp
+),
+(3,                                 -- source_id for customers
+   'updated_at',          -- watermark column
+    NULL,                           -- first run, no last value
+    '1900-01-01 00:00:00',         -- initialization value
+    GETDATE()                       -- current timestamp
+);
 
 -- =============================================
 -- Test Logging
